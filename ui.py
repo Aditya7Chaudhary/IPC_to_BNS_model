@@ -12,14 +12,24 @@ st.set_page_config(page_title="Legal Logo", layout="wide")
 # ==========================================
 @st.cache_resource
 def start_backend():
-    """Starts the FastAPI server in the background when Streamlit boots."""
-    # Using 'subprocess.DEVNULL' to keep the logs clean and avoid UI interference
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # 1. Run the setup scripts first to make sure data exists
+    # We use .run() because we want these to finish before the API starts
+    st.info("Initializing Legal Database... please wait.")
+    subprocess.run([sys.executable, "database.py"], cwd=current_dir)
+    subprocess.run([sys.executable, "ingest.py"], cwd=current_dir)
+    subprocess.run([sys.executable, "mapping_creator.py"], cwd=current_dir)
+    
+    # 2. Now start the API in the background
+    log_file = open("backend_log.txt", "w")
     process = subprocess.Popen(
         [sys.executable, "-m", "uvicorn", "api:app", "--host", "127.0.0.1", "--port", "8001"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
+        cwd=current_dir,
+        stdout=log_file,
+        stderr=log_file
     )
-    time.sleep(3) # Give it 3 seconds to wake up
+    time.sleep(5) 
     return process
 
 # Trigger the backend start
