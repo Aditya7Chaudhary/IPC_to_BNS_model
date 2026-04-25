@@ -1,0 +1,20 @@
+# Web Framework & Server
+fastapi
+uvicorn
+streamlit
+
+# Database
+sqlalchemy
+
+# Web Scraping & API Requests
+beautifulsoup4
+requests
+scrapy
+
+# PDF Processing
+pdfminer.six
+PyPDF2
+
+# NLP & Machine Learning
+spacy
+scikit-learn
