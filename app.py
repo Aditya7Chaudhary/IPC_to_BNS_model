@@ -59,12 +59,11 @@ if st.button("Translate to BNS", type="primary"):
 
 # 4. Next Ideas Footer
 st.divider()
-# FIX: Removed the backslashes from the triple quotes below!
 st.markdown(
-    """
+    "\"\"\"
     **Next ideas for development**
     - Format the JSON output into a clean, readable UI table instead of raw data.
     - Add a secondary tab to upload bulk CSV files for batch IPC-to-BNS translation.
     - Add a chat interface connecting to your Langchain/OpenAI agent to ask legal questions.
-    """
+    "\"\"\"
 )
