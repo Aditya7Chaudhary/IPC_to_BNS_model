@@ -1,3 +1,4 @@
 command:
-  - "bash"
-  - "run.sh"
+  - "streamlit"
+  - "run"
+  - "ui.py"
