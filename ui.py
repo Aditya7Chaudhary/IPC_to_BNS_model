@@ -6,7 +6,7 @@ from database import Session, LegalSection
 st.set_page_config(page_title="Legal Logo", layout="wide")
 
 # Because your API is running in the background of the same cluster, we use localhost!
-API_URL = "http://127.0.0.1:8000"
+API_URL = "http://127.0.0.1:8001"
 
 def highlight_text(text, query):
     """Highlight search terms in the results"""
