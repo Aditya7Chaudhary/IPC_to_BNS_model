@@ -1,39 +1,8 @@
 import streamlit as st
 import requests
-import subprocess
-import sys
-import time
 
 # 1. MUST BE FIRST! Move this above everything else.
 st.set_page_config(page_title="Legal Logo", layout="wide")
-
-# ==========================================
-# 🚀 MAGIC TRICK: START BACKEND AUTOMATICALLY
-# ==========================================
-@st.cache_resource
-def start_backend():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    # 1. Run the setup scripts first to make sure data exists
-    # We use .run() because we want these to finish before the API starts
-    st.info("Initializing Legal Database... please wait.")
-    subprocess.run([sys.executable, "database.py"], cwd=current_dir)
-    subprocess.run([sys.executable, "ingest.py"], cwd=current_dir)
-    subprocess.run([sys.executable, "mapping_creator.py"], cwd=current_dir)
-    
-    # 2. Now start the API in the background
-    log_file = open("backend_log.txt", "w")
-    process = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "api:app", "--host", "127.0.0.1", "--port", "8001"],
-        cwd=current_dir,
-        stdout=log_file,
-        stderr=log_file
-    )
-    time.sleep(5) 
-    return process
-
-# Trigger the backend start
-start_backend()
 
 # ==========================================
 # 🎨 STREAMLIT UI CODE BELOW
@@ -55,7 +24,8 @@ def main():
     # 2. Sidebar with Setup & Health Check
     with st.sidebar:
         st.header("⚙️ System Status")
-        st.write("This frontend connects to the local FastAPI backend.")
+        st.write("This frontend connects to a FastAPI backend that is prepared separately.")
+        st.caption("Run the Databricks setup notebook first, then start your API service.")
         
         try:
             # We check the /docs or /health endpoint of your API
