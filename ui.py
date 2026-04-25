@@ -1,11 +1,42 @@
 import streamlit as st
 import requests
+import subprocess
+import sys
+import time
+import os
 
-# 1. MUST BE FIRST! Move this above everything else.
+# 1. MUST BE FIRST!
 st.set_page_config(page_title="Legal Logo", layout="wide")
 
 # ==========================================
-# 🎨 STREAMLIT UI CODE BELOW
+# 🚀 BACKEND AUTO-STARTER (THE MISSING PIECE)
+# ==========================================
+@st.cache_resource
+def start_backend():
+    """Starts the FastAPI server in the background and logs output."""
+    current_dir = os.getcwd()
+    # Path to your api.py file
+    api_file = os.path.join(current_dir, "api.py")
+    log_path = os.path.join(current_dir, "backend_log.txt")
+    
+    # Start the process and write errors to backend_log.txt
+    with open(log_path, "w") as log_file:
+        process = subprocess.Popen(
+            [sys.executable, "-m", "uvicorn", "api:app", "--host", "127.0.0.1", "--port", "8001"],
+            cwd=current_dir,
+            stdout=log_file,
+            stderr=log_file
+        )
+    
+    # Give the API a moment to warm up
+    time.sleep(5)
+    return process
+
+# This line actually runs the function once when the app boots
+start_backend()
+
+# ==========================================
+# 🎨 STREAMLIT UI CODE
 # ==========================================
 
 # The API is running secretly on port 8001
@@ -24,11 +55,9 @@ def main():
     # 2. Sidebar with Setup & Health Check
     with st.sidebar:
         st.header("⚙️ System Status")
-        st.write("This frontend connects to a FastAPI backend that is prepared separately.")
-        st.caption("Run the Databricks setup notebook first, then start your API service.")
         
         try:
-            # We check the /docs or /health endpoint of your API
+            # Check if backend is alive
             res = requests.get(API_URL, timeout=2)
             if res.status_code in [200, 404, 405]: 
                 st.success("✅ Backend API is Online")
@@ -36,6 +65,15 @@ def main():
                 st.warning(f"⚠️ API Status: {res.status_code}")
         except Exception:
             st.error("❌ Backend API is Offline")
+            
+            # --- DEBUGGER BUTTON ---
+            if st.button("🔍 View Backend Error Logs"):
+                if os.path.exists("backend_log.txt"):
+                    with open("backend_log.txt", "r") as f:
+                        st.code(f.read())
+                else:
+                    st.write("No log file found. Process failed to start.")
+            # -----------------------
             
         st.divider()
         st.markdown("**Model Version:** `v1.0-databricks`")
